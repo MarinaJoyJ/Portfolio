@@ -41,17 +41,20 @@ document.addEventListener('DOMContentLoaded', () => {
   // Project slider functionality
   const slider = document.querySelector('.slider');
   const slides = document.querySelectorAll('.slide');
-  const slidesPerView = window.innerWidth < 576 ? 1 : window.innerWidth < 1024 ? 2 : 3;
-  const totalSlides = slides.length - (slidesPerView - 1);
+  const slideWidth = 30;
+  const slidesPerView = Math.floor(100 / slideWidth);
+  const totalSlides = slides.length;
   let slideIndex = 0;
 
   function updateSlider() {
-    const shift = (100 / slidesPerView) * slideIndex; // Adjust for multiple images
+    const maxIndex = totalSlides - slidesPerView;
+    slideIndex = Math.min(slideIndex, maxIndex);
+    const shift = slideWidth * slideIndex; // Adjust for multiple images
   slider.style.transform = `translateX(-${shift}%)`;
   }
 
   window.nextSlide = function () {
-    if (slideIndex < totalSlides - 1) {
+    if (slideIndex < totalSlides - slidesPerView) {
       slideIndex++;
     } else {
       slideIndex = 0; // Loop back to start
@@ -62,9 +65,8 @@ document.addEventListener('DOMContentLoaded', () => {
   window.prevSlide = function () {
     if (slideIndex > 0) {
       slideIndex--;
-    } else {
-      slideIndex = totalSlides - 1;
-    }
+    } 
+    
     updateSlider();
   };
 

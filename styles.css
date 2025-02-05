@@ -199,6 +199,7 @@ header {
     display: flex;
     flex-wrap: nowrap;
     overflow: visible;
+    gap: 0;
     transition: transform 0.8s ease-in-out;
 }
 
