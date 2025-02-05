@@ -41,16 +41,25 @@ document.addEventListener('DOMContentLoaded', () => {
   // Project slider functionality
   const slider = document.querySelector('.slider');
   const slides = document.querySelectorAll('.slide');
-  const slideWidth = 30;
-  const slidesPerView = Math.floor(100 / slideWidth);
-  const totalSlides = slides.length;
+
+  // Adjust slides per view based on screen width
+  function getSlidesPerView() {
+    if (window.innerWidth < 576) {
+      return 1;
+    } else if (window.innerWidth < 1024) {
+      return 2;
+    } else {
+      return 3;
+    }
+  }
+
+  let slidesPerView = getSlidesPerView();
+  let totalSlides = slides.length;
   let slideIndex = 0;
 
   function updateSlider() {
-    const maxIndex = totalSlides - slidesPerView;
-    slideIndex = Math.min(slideIndex, maxIndex);
-    const shift = slideWidth * slideIndex; // Adjust for multiple images
-  slider.style.transform = `translateX(-${shift}%)`;
+    const shift = (100 / slidesPerView) * slideIndex; // Adjust for multiple images
+    slider.style.transform = `translateX(-${shift}%)`;
   }
 
   window.nextSlide = function () {
@@ -65,14 +74,29 @@ document.addEventListener('DOMContentLoaded', () => {
   window.prevSlide = function () {
     if (slideIndex > 0) {
       slideIndex--;
-    } 
-    
+    } else {
+      slideIndex = totalSlides - slidesPerView;
+    }
     updateSlider();
   };
 
   document.querySelector('.next')?.addEventListener('click', nextSlide);
   document.querySelector('.prev')?.addEventListener('click', prevSlide);
 
-  // Auto-slide functionality
-   setInterval(nextSlide, 4000);
+  // Auto-slide functionality (Pause when page is not visible)
+  let autoSlide = setInterval(nextSlide, 4000);
+
+  document.addEventListener("visibilitychange", function () {
+    if (document.hidden) {
+      clearInterval(autoSlide);
+    } else {
+      autoSlide = setInterval(nextSlide, 4000);
+    }
+  });
+
+  // Update slidesPerView on window resize
+  window.addEventListener("resize", function () {
+    slidesPerView = getSlidesPerView();
+    updateSlider();
+  });
 });
